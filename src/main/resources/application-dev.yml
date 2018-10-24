@@ -1,0 +1,34 @@
+#spring boot集成mybatis  https://blog.csdn.net/isea533/article/details/50359390
+spring:
+  application:
+    name: freaxjj-blog
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    username: root
+    password: Mysql@8578
+    url: jdbc:mysql://127.0.0.1:3306/freaxjjblog?useUnicode:true&amp;characterEncoding:UTF-8
+    driverClassName: com.mysql.jdbc.Driver
+    sql-script-encoding: UTF-8
+    filters: stat
+    maxActive: 20
+    initialSize: 1
+    maxWait: 60000
+    minIdle: 1
+    timeBetweenEvictionRunsMillis: 60000
+    minEvictableIdleTimeMillis: 300000
+    validationQuery: select 'x'
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    poolPreparedStatements: true
+    maxOpenPreparedStatements: 20
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  #  实体类
+  type-aliases-package: com.test.springboottest.model
+
+server:
+  port: 8081
+
+
+

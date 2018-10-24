@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.test.springboottest.dao.AdminUserMapper">
+  <resultMap id="BaseResultMap" type="com.test.springboottest.model.AdminUser">
+    <constructor>
+      <idArg column="id" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="username" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="password" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="birth_date" javaType="java.util.Date" jdbcType="DATE" />
+      <arg column="nickname" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="email" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="github" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="qq" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="wecaht" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="avatar" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="gmt_create" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+      <arg column="gmt_modified" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+    </constructor>
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.test.springboottest.model.AdminUserWithBLOBs">
+    <constructor>
+      <idArg column="id" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="username" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="password" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="birth_date" javaType="java.util.Date" jdbcType="DATE" />
+      <arg column="nickname" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="email" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="github" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="qq" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="wecaht" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="avatar" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="gmt_create" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+      <arg column="gmt_modified" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+      <arg column="hobby" javaType="java.lang.String" jdbcType="LONGVARCHAR" />
+      <arg column="motto" javaType="java.lang.String" jdbcType="LONGVARCHAR" />
+      <arg column="md_info" javaType="java.lang.String" jdbcType="LONGVARCHAR" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, username, password, birth_date, nickname, email, github, qq, wecaht, avatar, 
+    gmt_create, gmt_modified
+  </sql>
+  <sql id="Blob_Column_List">
+    hobby, motto, md_info
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from admin_user
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectByUsername" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from admin_user
+    where username = #{userName,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from admin_user
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.test.springboottest.model.AdminUserWithBLOBs">
+    insert into admin_user (id, username, password, 
+      birth_date, nickname, email, 
+      github, qq, wecaht, 
+      avatar, gmt_create, gmt_modified, 
+      hobby, motto, md_info
+      )
+    values (#{id,jdbcType=INTEGER}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
+      #{birthDate,jdbcType=DATE}, #{nickname,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, 
+      #{github,jdbcType=VARCHAR}, #{qq,jdbcType=VARCHAR}, #{wecaht,jdbcType=VARCHAR}, 
+      #{avatar,jdbcType=VARCHAR}, #{gmtCreate,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP}, 
+      #{hobby,jdbcType=LONGVARCHAR}, #{motto,jdbcType=LONGVARCHAR}, #{mdInfo,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.test.springboottest.model.AdminUserWithBLOBs">
+    insert into admin_user
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="username != null">
+        username,
+      </if>
+      <if test="password != null">
+        password,
+      </if>
+      <if test="birthDate != null">
+        birth_date,
+      </if>
+      <if test="nickname != null">
+        nickname,
+      </if>
+      <if test="email != null">
+        email,
+      </if>
+      <if test="github != null">
+        github,
+      </if>
+      <if test="qq != null">
+        qq,
+      </if>
+      <if test="wecaht != null">
+        wecaht,
+      </if>
+      <if test="avatar != null">
+        avatar,
+      </if>
+      <if test="gmtCreate != null">
+        gmt_create,
+      </if>
+      <if test="gmtModified != null">
+        gmt_modified,
+      </if>
+      <if test="hobby != null">
+        hobby,
+      </if>
+      <if test="motto != null">
+        motto,
+      </if>
+      <if test="mdInfo != null">
+        md_info,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="username != null">
+        #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null">
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="birthDate != null">
+        #{birthDate,jdbcType=DATE},
+      </if>
+      <if test="nickname != null">
+        #{nickname,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null">
+        #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="github != null">
+        #{github,jdbcType=VARCHAR},
+      </if>
+      <if test="qq != null">
+        #{qq,jdbcType=VARCHAR},
+      </if>
+      <if test="wecaht != null">
+        #{wecaht,jdbcType=VARCHAR},
+      </if>
+      <if test="avatar != null">
+        #{avatar,jdbcType=VARCHAR},
+      </if>
+      <if test="gmtCreate != null">
+        #{gmtCreate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtModified != null">
+        #{gmtModified,jdbcType=TIMESTAMP},
+      </if>
+      <if test="hobby != null">
+        #{hobby,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="motto != null">
+        #{motto,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="mdInfo != null">
+        #{mdInfo,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.test.springboottest.model.AdminUserWithBLOBs">
+    update admin_user
+    <set>
+      <if test="username != null">
+        username = #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null">
+        password = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="birthDate != null">
+        birth_date = #{birthDate,jdbcType=DATE},
+      </if>
+      <if test="nickname != null">
+        nickname = #{nickname,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null">
+        email = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="github != null">
+        github = #{github,jdbcType=VARCHAR},
+      </if>
+      <if test="qq != null">
+        qq = #{qq,jdbcType=VARCHAR},
+      </if>
+      <if test="wecaht != null">
+        wecaht = #{wecaht,jdbcType=VARCHAR},
+      </if>
+      <if test="avatar != null">
+        avatar = #{avatar,jdbcType=VARCHAR},
+      </if>
+      <if test="gmtCreate != null">
+        gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtModified != null">
+        gmt_modified = #{gmtModified,jdbcType=TIMESTAMP},
+      </if>
+      <if test="hobby != null">
+        hobby = #{hobby,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="motto != null">
+        motto = #{motto,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="mdInfo != null">
+        md_info = #{mdInfo,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.test.springboottest.model.AdminUserWithBLOBs">
+    update admin_user
+    set username = #{username,jdbcType=VARCHAR},
+      password = #{password,jdbcType=VARCHAR},
+      birth_date = #{birthDate,jdbcType=DATE},
+      nickname = #{nickname,jdbcType=VARCHAR},
+      email = #{email,jdbcType=VARCHAR},
+      github = #{github,jdbcType=VARCHAR},
+      qq = #{qq,jdbcType=VARCHAR},
+      wecaht = #{wecaht,jdbcType=VARCHAR},
+      avatar = #{avatar,jdbcType=VARCHAR},
+      gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
+      gmt_modified = #{gmtModified,jdbcType=TIMESTAMP},
+      hobby = #{hobby,jdbcType=LONGVARCHAR},
+      motto = #{motto,jdbcType=LONGVARCHAR},
+      md_info = #{mdInfo,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.test.springboottest.model.AdminUser">
+    update admin_user
+    set username = #{username,jdbcType=VARCHAR},
+      password = #{password,jdbcType=VARCHAR},
+      birth_date = #{birthDate,jdbcType=DATE},
+      nickname = #{nickname,jdbcType=VARCHAR},
+      email = #{email,jdbcType=VARCHAR},
+      github = #{github,jdbcType=VARCHAR},
+      qq = #{qq,jdbcType=VARCHAR},
+      wecaht = #{wecaht,jdbcType=VARCHAR},
+      avatar = #{avatar,jdbcType=VARCHAR},
+      gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
+      gmt_modified = #{gmtModified,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

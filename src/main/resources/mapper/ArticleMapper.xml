@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.test.springboottest.dao.ArticleMapper">
+  <resultMap id="BaseResultMap" type="com.test.springboottest.model.Article">
+    <constructor>
+      <idArg column="id" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="title" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="gmt_create" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+      <arg column="gmt_modified" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+      <arg column="is_release" javaType="java.lang.Boolean" jdbcType="BIT" />
+      <arg column="tag_id" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="hot" javaType="java.lang.Boolean" jdbcType="BIT" />
+    </constructor>
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.test.springboottest.model.ArticleWithBLOBs">
+    <constructor>
+      <idArg column="id" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="title" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="gmt_create" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+      <arg column="gmt_modified" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+      <arg column="is_release" javaType="java.lang.Boolean" jdbcType="BIT" />
+      <arg column="tag_id" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="introduction" javaType="java.lang.String" jdbcType="LONGVARCHAR" />
+      <arg column="html_material" javaType="java.lang.String" jdbcType="LONGVARCHAR" />
+      <arg column="md_material" javaType="java.lang.String" jdbcType="LONGVARCHAR" />
+      <arg column="hot" javaType="java.lang.Boolean" jdbcType="BIT" />
+    </constructor>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    id, title, gmt_create, gmt_modified, is_release, tag_id, hot
+  </sql>
+  <sql id="Blob_Column_List">
+    introduction, html_material, md_material
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from article
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <!--条件查询-->
+  <select id="selectSelective" parameterType="java.util.HashMap" resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from article
+    <if test="pageNo!=null and pageNo>0">
+      limit #{pageStart,jdbcType=INTEGER},#{pageSize,jdbcType=INTEGER}
+    </if>
+  </select>
+
+  <!--统计置顶文章数-->
+  <select id="countTop" resultType="int" parameterType="java.lang.String">
+    select count(*) as count from article where hot=1 and is_release=1
+    <if test="_parameter != null and _parameter != ''">
+      and DATE_FORMAT(gmt_create,'%Y年%m月')=#{gmtCreateStr,jdbcType=VARCHAR}
+    </if>
+  </select>
+
+  <!--统计总文章数-->
+  <select id="count" resultType="int" parameterType="java.lang.String">
+    select count(*) as count from article where is_release=1
+    <if test="_parameter != null and _parameter != ''">
+      and DATE_FORMAT(gmt_create,'%Y年%m月')=#{gmtCreateStr,jdbcType=VARCHAR}
+    </if>
+  </select>
+
+  <!--分页-->
+  <select id="page" parameterType="java.util.HashMap" resultMap="ResultMapWithBLOBs">
+    SELECT * FROM (
+        (SELECT * FROM article WHERE hot = 1 and is_release=1
+          <if test="gmtCreateStr!=null and gmtCreateStr!=''">
+            and DATE_FORMAT(gmt_create,'%Y年%m月')=#{gmtCreateStr}
+          </if>
+        ORDER BY id DESC LIMIT 0,#{topNum})
+      UNION
+        (SELECT * FROM article WHERE hot = 0 and is_release=1
+          <if test="gmtCreateStr!=null and gmtCreateStr!=''">
+            and DATE_FORMAT(gmt_create,'%Y年%m月')=#{gmtCreateStr}
+          </if>
+        ORDER BY id DESC LIMIT #{offset},#{limit}))A
+  </select>
+
+  <!--日期分类-->
+  <select id="getArchive" resultType="java.util.HashMap">
+		  SELECT
+		    DATE_FORMAT(gmt_create,'%Y年%m月') AS gmtCreateStr,
+		    COUNT(*) AS articleCount
+		  FROM
+		    article
+		  GROUP BY DATE_FORMAT(gmt_create,'%Y年%m月')
+		  ORDER BY gmt_create DESC
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from article
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.test.springboottest.model.ArticleWithBLOBs">
+    insert into article (id, title, gmt_create, 
+      gmt_modified, is_release, tag_id, 
+      introduction, html_material, md_material
+      )
+    values (#{id,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR}, #{gmtCreate,jdbcType=TIMESTAMP}, 
+      #{gmtModified,jdbcType=TIMESTAMP}, #{isRelease,jdbcType=BIT}, #{tagId,jdbcType=INTEGER}, 
+      #{introduction,jdbcType=LONGVARCHAR}, #{htmlMaterial,jdbcType=LONGVARCHAR}, #{mdMaterial,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.test.springboottest.model.ArticleWithBLOBs">
+    insert into article
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="title != null">
+        title,
+      </if>
+      <if test="gmtCreate != null">
+        gmt_create,
+      </if>
+      <if test="gmtModified != null">
+        gmt_modified,
+      </if>
+      <if test="isRelease != null">
+        is_release,
+      </if>
+      <if test="tagId != null">
+        tag_id,
+      </if>
+      <if test="introduction != null">
+        introduction,
+      </if>
+      <if test="htmlMaterial != null">
+        html_material,
+      </if>
+      <if test="mdMaterial != null">
+        md_material,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="title != null">
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="gmtCreate != null">
+        #{gmtCreate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtModified != null">
+        #{gmtModified,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isRelease != null">
+        #{isRelease,jdbcType=BIT},
+      </if>
+      <if test="tagId != null">
+        #{tagId,jdbcType=INTEGER},
+      </if>
+      <if test="introduction != null">
+        #{introduction,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="htmlMaterial != null">
+        #{htmlMaterial,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="mdMaterial != null">
+        #{mdMaterial,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.test.springboottest.model.ArticleWithBLOBs">
+    update article
+    <set>
+      <if test="title != null">
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="gmtCreate != null">
+        gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtModified != null">
+        gmt_modified = #{gmtModified,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isRelease != null">
+        is_release = #{isRelease,jdbcType=BIT},
+      </if>
+      <if test="tagId != null">
+        tag_id = #{tagId,jdbcType=INTEGER},
+      </if>
+      <if test="introduction != null">
+        introduction = #{introduction,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="htmlMaterial != null">
+        html_material = #{htmlMaterial,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="mdMaterial != null">
+        md_material = #{mdMaterial,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.test.springboottest.model.ArticleWithBLOBs">
+    update article
+    set title = #{title,jdbcType=VARCHAR},
+      gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
+      gmt_modified = #{gmtModified,jdbcType=TIMESTAMP},
+      is_release = #{isRelease,jdbcType=BIT},
+      tag_id = #{tagId,jdbcType=INTEGER},
+      introduction = #{introduction,jdbcType=LONGVARCHAR},
+      html_material = #{htmlMaterial,jdbcType=LONGVARCHAR},
+      md_material = #{mdMaterial,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.test.springboottest.model.Article">
+    update article
+    set title = #{title,jdbcType=VARCHAR},
+      gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
+      gmt_modified = #{gmtModified,jdbcType=TIMESTAMP},
+      is_release = #{isRelease,jdbcType=BIT},
+      tag_id = #{tagId,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>
