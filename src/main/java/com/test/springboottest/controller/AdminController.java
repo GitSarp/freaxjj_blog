@@ -60,7 +60,7 @@ public class AdminController {
             return "admin_login";
         }
         request.getSession().setAttribute(Constant.CURR_ADMIN_USER,qryResult);
-        return "blogadd";
+        return "admin/index";
     }
 
     //注册
@@ -77,6 +77,12 @@ public class AdminController {
         adminUserService.insert(adminUserWithBLOBs);
         model.addAttribute("info","请等待超级管理员审核完成后，结果会通过邮箱告知您");
         return "admin_reg";
+    }
+
+
+    @GetMapping("/blogmanage")
+    public String blogManage(){
+        return "admin/blog_manage";
     }
 
     //保存或发表博客
